@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { searchEvents, getEventById, getClassifications } from '../../services/ticketmaster'
+import { toApiStartOfDay, toApiEndOfDay } from '../../utils/date'
 
 const PAGE_SIZE = 20
 const MAX_PAGE = 49
@@ -12,8 +13,8 @@ export const fetchEvents = createAsyncThunk(
       segmentId: filters.segmentId,
       city: filters.city,
       countryCode: filters.countryCode,
-      startDateTime: filters.startDateTime,
-      endDateTime: filters.endDateTime,
+      startDateTime: filters.startDate ? toApiStartOfDay(filters.startDate) : '',
+      endDateTime: filters.endDate ? toApiEndOfDay(filters.endDate) : '',
       sort: 'date,asc',
       size: PAGE_SIZE,
       page,
@@ -49,8 +50,8 @@ const initialState = {
     segmentId: '',
     city: '',
     countryCode: '',
-    startDateTime: '',
-    endDateTime: '',
+    startDate: '',
+    endDate: '',
   },
   currentEvent: null,
   currentEventStatus: 'idle',
