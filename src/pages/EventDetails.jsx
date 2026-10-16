@@ -1,24 +1,49 @@
-import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchEventById, clearCurrentEvent } from '../store/slices/eventsSlice'
+import { registerForEvent, cancelRegistration } from '../store/slices/registrationsSlice'
 import { formatEventDate } from '../utils/date'
 import Loader from '../components/Loader'
 import ErrorMessage from '../components/ErrorMessage'
+import Toast from '../components/Toast'
 import './EventDetails.css'
 
 function EventDetails() {
   const { id } = useParams()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [toast, setToast] = useState(null)
 
   const event = useSelector((state) => state.events.currentEvent)
   const status = useSelector((state) => state.events.currentEventStatus)
   const error = useSelector((state) => state.events.currentEventError)
+  const currentUser = useSelector((state) => state.auth.currentUser)
+  const registrations = useSelector((state) => state.registrations.items)
 
   useEffect(() => {
     dispatch(fetchEventById(id))
     return () => dispatch(clearCurrentEvent())
   }, [id, dispatch])
+
+  const existingRegistration = currentUser
+    ? registrations.find((reg) => reg.userId === currentUser.id && reg.eventId === id)
+    : null
+
+  function handleRegister() {
+    if (!currentUser) {
+      navigate('/login')
+      return
+    }
+
+    dispatch(registerForEvent({ userId: currentUser.id, event }))
+    setToast('You are registered for this event')
+  }
+
+  function handleCancel() {
+    dispatch(cancelRegistration({ registrationId: existingRegistration.id }))
+    setToast('Registration cancelled')
+  }
 
   if (status === 'loading' || status === 'idle') {
     return <Loader text="Loading event..." />
@@ -87,6 +112,16 @@ function EventDetails() {
               Buy tickets on Ticketmaster
             </a>
           )}
+
+          {existingRegistration ? (
+            <button className="btn btn-danger" onClick={handleCancel}>
+              Cancel registration
+            </button>
+          ) : (
+            <button className="btn btn-outline" onClick={handleRegister}>
+              Register for this event
+            </button>
+          )}
         </div>
 
         {event.seatmap?.staticUrl && (
@@ -96,6 +131,8 @@ function EventDetails() {
           </div>
         )}
       </div>
+
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   )
 }
