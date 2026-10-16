@@ -20,6 +20,7 @@ function Navbar() {
 
         <div className="navbar-links">
           <Link to="/events">Events</Link>
+          <Link to="/upcoming">Upcoming</Link>
           <Link to="/categories">Categories</Link>
 
           {currentUser && <Link to="/my-events">My Events</Link>}

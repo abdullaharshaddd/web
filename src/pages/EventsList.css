@@ -1,0 +1,9 @@
+.events-toolbar {
+  margin-bottom: 18px;
+}
+
+.events-empty {
+  text-align: center;
+  color: var(--color-muted);
+  padding: 50px 0;
+}
