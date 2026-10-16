@@ -10,3 +10,9 @@
   font-size: 14px;
   color: var(--color-muted);
 }
+
+@media (max-width: 420px) {
+  .pagination {
+    flex-wrap: wrap;
+  }
+}

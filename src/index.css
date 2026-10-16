@@ -114,8 +114,12 @@ input:focus, select:focus {
   gap: 20px;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .page {
     padding: 16px 14px 40px;
+  }
+
+  .grid {
+    gap: 14px;
   }
 }
