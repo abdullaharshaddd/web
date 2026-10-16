@@ -15,7 +15,13 @@ async function callApi(path, params = {}) {
     }
   })
 
-  const response = await fetch(url.toString())
+  let response
+
+  try {
+    response = await fetch(url.toString())
+  } catch (err) {
+    throw new Error('Could not reach Ticketmaster right now. Check your connection and API key.')
+  }
 
   if (!response.ok) {
     throw new Error('Could not load data from Ticketmaster right now')
